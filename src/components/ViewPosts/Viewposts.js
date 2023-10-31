@@ -44,41 +44,36 @@ function Viewposts() {
   }, []);
 
   return (
-    <div className="container">
+    <div className="container mx-auto mt-[120px] p-10">
       {loading ? (
         <p>loading...</p>
       ) : (
-        <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 cursor-pointer">
           {posts.map((post) => (
-            <li key={post.id}>
-              <div className="container mt-12">
-                <div className="row">
-                  {/* Repeat this card structure for each post */}
-                  <div className="col-md-4 col-sm-6 mb-4">
-                    <div className="card w-[320px] bg-base-100 shadow-xl">
-                      <div className="card-body">
-                        <h2 className="card-title">
-                          {post.title}
-                          {/* <div className="badge badge-secondary">NEW</div> */}
-                        </h2>
-                        <p>{post.description}</p>
-                        <p>Problem Type: {post.problem_type}</p>
-                        <p>Location: {post.location}</p>
-                        <p>Contact: {post.contact}</p>
+            <div key={post.id} className="w-full">
+              <div className="bg-white rounded-lg shadow-md">
+                <div className="p-4">
+                  <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
+                  <p className="text-gray-600 mb-2">
+                    Description: {post.description}
+                  </p>
+                  <p className="text-gray-600 mb-2">
+                    Problem Type: {post.problem_type}
+                  </p>
+                  <p className="text-gray-600 mb-2">
+                    Location: {post.location}
+                  </p>
+                  <p className="text-gray-600 mb-2">Contact: {post.contact}</p>
 
-                        <div className="card-actions justify-end">
-                          <div className="badge badge-outline">Fashion</div>
-                          <div className="badge badge-outline">Products</div>
-                        </div>
-                      </div>
-                    </div>
+                  <div className="flex justify-end">
+                    {/* <span className="badge badge-primary mr-2">Fashion</span>
+                    <span className="badge badge-primary">Products</span> */}
                   </div>
-                  {/* Repeat the above card structure for each post */}
                 </div>
               </div>
-            </li>
+            </div>
           ))}
-        </>
+        </div>
       )}
     </div>
   );
