@@ -8,6 +8,15 @@ import {
   getDocs,
 } from "firebase/firestore";
 
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  listAll,
+} from "firebase/storage";
+import { v4 } from "uuid";
+
 function CreatePost() {
   const firebaseConfig = {
     apiKey: "AIzaSyAwAVB02gY3_62dBdgAzCXwnalbWFpO4nM",
@@ -20,6 +29,7 @@ function CreatePost() {
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const storage = getStorage(app);
 
   useEffect(() => {
     // Fetch data from the "Posts" collection
@@ -53,8 +63,17 @@ function CreatePost() {
 
   // const navigate = useNavigate();
 
+  const [imageUpload, setImageUpload] = useState(null);
+
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    if (imageUpload == null) return;
+
+    const imageref = ref(storage, `images/${imageUpload.name + v4()}`);
+    uploadBytes(imageref, imageUpload).then(() => {
+      alert("image uploaded successfully");
+    });
 
     const docRef = doc(db, "Posts", formData.title);
     setDoc(docRef, {
@@ -89,11 +108,20 @@ function CreatePost() {
       });
   };
 
+  const handleFileChange = (event) => {
+    // const selectedFile = event.target.files[0];
+    // setFormData((prevInfo) => ({
+    //   ...prevInfo,
+    //   post_img: selectedFile,
+    // }));
+    setImageUpload(event.target.files[0]);
+  };
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
     if (name === "contact") {
-      const phoneNumber = value.replace(/\D/, "").slice(0, 10);
+      const phoneNumber = value.replace(/\D/g, "").slice(0, 10);
       setFormData((prevInfo) => ({
         ...prevInfo,
         [name]: phoneNumber,
@@ -138,8 +166,7 @@ function CreatePost() {
               type="file"
               className="file-input file-input-ghost w-full max-w-xs"
               name="post_img"
-              value={formData.post_img}
-              onChange={handleChange}
+              onChange={handleFileChange}
             />
             <div class="form-control">
               <input

@@ -7,6 +7,13 @@ import {
   collection,
   getDocs,
 } from "firebase/firestore";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  listAll,
+} from "firebase/storage";
 
 function Viewposts() {
   const firebaseConfig = {
@@ -20,6 +27,11 @@ function Viewposts() {
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  const [imageList, setImageList] = useState([]);
+
+  const imageListRef = ref(storage, "images/");
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +53,14 @@ function Viewposts() {
     };
 
     fetchData();
+
+    listAll(imageListRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setImageList((prev) => [...prev, url]);
+        });
+      });
+    });
   }, []);
 
   return (
@@ -53,6 +73,9 @@ function Viewposts() {
             <div key={post.id} className="w-full">
               <div className="bg-white rounded-lg shadow-md">
                 <div className="p-4">
+                  {imageList.map((url) => {
+                    <img src={url} alt="error-load" />;
+                  })}
                   <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
                   <p className="text-gray-600 mb-2">
                     Description: {post.description}
